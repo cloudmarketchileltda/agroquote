@@ -1,0 +1,210 @@
+# Antogravity — Reglas Generales para Desarrollo Web y Móvil
+
+## 1. Filosofía General
+- **Claridad sobre cleverness**: el código debe ser legible por un humano en primera instancia. Evitar soluciones excesivamente compactas o "mágicas" si comprometen la comprensión.
+- **Consistencia ante todo**: seguir las convenciones ya establecidas en el proyecto aunque exista una alternativa "mejor". La coherencia reduce fricción.
+- **Mínima superficie de error**: preferir soluciones simples, sin dependencias innecesarias. Si se puede resolver con lo que ya está instalado, no agregar una librería nueva.
+- **Mobile-first siempre**: el diseño y la lógica se conciben primero para pantallas pequeñas y se escalan hacia arriba.
+
+---
+
+## 2. Lenguajes y Versiones
+| Contexto | Lenguaje | Versión mínima |
+|---|---|---|
+| Web (frontend) | TypeScript | 5.x |
+| Web (backend/API) | TypeScript (Node.js) | Node 20 LTS |
+| Móvil | Dart (Flutter) | Dart 3.x / Flutter 3.x |
+| Estilos | Tailwind CSS | 3.x |
+
+- **No usar JavaScript puro** en proyectos nuevos. Toda lógica de negocio debe estar tipada.
+- Usar `strict: true` en `tsconfig.json` sin excepción.
+
+---
+
+## 3. Estructura de Proyecto
+
+### 3.1 Web
+```
+src/
+├── app/              # Rutas y páginas (Next.js App Router)
+├── components/       # Componentes reutilizables
+│   ├── ui/           # Átomos y moléculas de UI
+│   └── features/     # Componentes de dominio/negocio
+├── hooks/            # Custom React hooks
+├── lib/              # Utilidades, helpers, configuraciones
+├── services/         # Llamadas a APIs externas / lógica de negocio
+├── store/            # Estado global (Zustand / Redux Toolkit)
+├── types/            # Tipos e interfaces TypeScript globales
+└── styles/           # Estilos globales
+```
+
+### 3.2 Móvil (Flutter)
+```
+lib/
+├── core/             # Configuración, constantes, temas
+├── data/             # Repositorios, fuentes de datos, modelos
+├── domain/           # Entidades, casos de uso, interfaces
+├── presentation/     # Widgets, pantallas, BLoC/Cubit
+│   ├── screens/
+│   ├── widgets/
+│   └── blocs/
+└── main.dart
+```
+
+---
+
+## 4. Convenciones de Código
+
+### 4.1 Nomenclatura
+- **Variables y funciones**: `camelCase`
+- **Clases, componentes, tipos e interfaces**: `PascalCase`
+- **Constantes globales**: `UPPER_SNAKE_CASE`
+- **Archivos TypeScript/JS**: `kebab-case.ts` (ej: `user-service.ts`)
+- **Archivos de componentes React**: `PascalCase.tsx` (ej: `UserCard.tsx`)
+- **Archivos Dart**: `snake_case.dart` (ej: `user_repository.dart`)
+- **Interfaces TypeScript**: prefijo `I` solo cuando colisiona con una clase del mismo nombre. En general, **sin prefijo**.
+
+### 4.2 Funciones y Componentes
+- Preferir **funciones flecha** para componentes React y callbacks.
+- Limitar funciones a **una sola responsabilidad**. Si supera 50 líneas, considerar extracción.
+- Los componentes React no deben superar **200 líneas**. Extraer subcomponentes si es necesario.
+- Evitar `any` en TypeScript. Usar `unknown` y hacer narrowing explícito si el tipo es incierto.
+
+### 4.3 Imports
+- Orden: librerías externas → librerías internas → componentes → tipos → estilos.
+- Usar **alias de paths** (`@/components`, `@/lib`, etc.) en lugar de rutas relativas profundas (`../../..`).
+- No importar módulos completos si solo se usa una función (tree-shaking).
+
+---
+
+## 5. Componentes y UI
+- **Tailwind CSS** es el sistema de estilos principal. No usar CSS-in-JS ni módulos CSS salvo casos excepcionales justificados.
+- Clases de Tailwind: ordenar siguiendo la convención de `prettier-plugin-tailwindcss`.
+- No hardcodear colores, fuentes ni espaciados fuera del `tailwind.config`. Usar los tokens definidos en el design system.
+- Los componentes de UI deben ser **sin estado (stateless)** por defecto. El estado sube al nivel mínimo necesario.
+- Accesibilidad: todo elemento interactivo debe tener `aria-label`, roles correctos y ser navegable por teclado.
+
+---
+
+## 6. Estado y Gestión de Datos
+
+### 6.1 Web
+- **Estado local**: `useState` / `useReducer` de React.
+- **Estado global de UI**: Zustand (preferido) o Redux Toolkit.
+- **Estado del servidor**: React Query (`@tanstack/react-query`). No manejar cache de datos del servidor con estado global.
+- Separar claramente **estado de UI** de **estado de dominio**.
+
+### 6.2 Móvil (Flutter)
+- Usar **BLoC/Cubit** (flutter_bloc) para estado de presentación.
+- No poner lógica de negocio en widgets. Los widgets solo renderizan y despachan eventos.
+- Los repositorios devuelven `Either<Failure, Data>` (usando `fpdart` o `dartz`) para manejo explícito de errores.
+
+---
+
+## 7. Manejo de Errores
+- **Nunca silenciar errores** con bloques `catch` vacíos.
+- En TypeScript, usar tipos de resultado o clases de error personalizadas. No lanzar strings crudos.
+- En Flutter, usar el patrón `Either` o sealed classes para errores de dominio.
+- Errores de red: siempre mostrar feedback al usuario. Nunca fallar silenciosamente.
+- Logging: usar un servicio centralizado (no `console.log` en producción). En desarrollo, los logs son aceptables pero deben removerse antes de hacer merge a `main`.
+
+---
+
+## 8. API y Comunicación
+- Todas las llamadas a APIs externas van en la capa `services/` (web) o `data/` (móvil). Nunca directamente en componentes o widgets.
+- Usar **variables de entorno** para URLs base, claves de API y configuración sensible. Nunca hardcodear.
+- Formato de respuesta esperado: JSON con estructura `{ data, error, meta }` cuando sea posible.
+- Timeout máximo por request: **10 segundos**. Implementar reintentos con backoff exponencial para errores de red transitorios.
+- Versionar endpoints: `/api/v1/...`
+
+---
+
+## 9. Rendimiento
+
+### Web
+- Imágenes: usar formatos modernos (WebP/AVIF). Siempre definir `width` y `height` para evitar CLS.
+- Lazy loading para componentes pesados (`React.lazy` / `next/dynamic`).
+- Evitar re-renders innecesarios: usar `useMemo` y `useCallback` con criterio, no por defecto.
+- Bundle size: revisar con `@next/bundle-analyzer` antes de agregar dependencias grandes.
+
+### Móvil
+- Evitar rebuilds innecesarios: usar `const` constructors donde sea posible.
+- Listas largas: siempre usar `ListView.builder` o `SliverList`, nunca `Column` con `map`.
+- Imágenes: usar `cached_network_image`. No cargar imágenes sin caché.
+- Perfilar con DevTools antes de optimizar. No optimizar a ciegas.
+
+---
+
+## 10. Testing
+- **Cobertura mínima esperada**: 70% en lógica de negocio y servicios.
+- **Web**: Jest + React Testing Library para unitarios e integración. Playwright para E2E.
+- **Móvil**: flutter_test para unitarios y de widgets. Integration tests para flujos críticos.
+- Los tests deben ser **deterministas**: sin dependencias de tiempo real, red o sistema de archivos sin mockear.
+- Nombrar tests con el patrón: `should [comportamiento esperado] when [condición]`.
+
+---
+
+## 11. Git y Control de Versiones
+- **Commits**: seguir [Conventional Commits](https://www.conventionalcommits.org/).
+- Un commit = un cambio lógico. No mezclar refactors con features.
+- **Branches**: `feature/nombre-corto`, `fix/nombre-corto`, `chore/nombre-corto`.
+
+---
+
+## 12. Seguridad
+- **Nunca** almacenar secretos en el repositorio. Usar `.env` y asegurarse de que esté en `.gitignore`.
+- Sanitizar toda entrada del usuario antes de procesarla o mostrarla.
+- En web: proteger contra XSS, CSRF y open redirects. Usar las protecciones nativas de Next.js.
+- En móvil: almacenar tokens con `flutter_secure_storage`, no en SharedPreferences.
+- Revisar dependencias con `npm audit` / `flutter pub outdated` regularmente.
+
+---
+
+## 13. Documentación
+- Todo módulo público debe tener un comentario JSDoc/DartDoc que explique **qué hace** y **cuándo usarlo**.
+- Los tipos complejos deben documentarse con ejemplos de uso.
+- El `README.md` de cada proyecto debe incluir: propósito, cómo correr en local, variables de entorno necesarias y cómo correr los tests.
+- No documentar lo obvio. Documentar el **por qué**, no el **qué**.
+
+---
+
+## 14. Reglas para Gemini al Generar Código
+1. **Respetar la estructura existente** del proyecto antes de crear archivos nuevos.
+2. **Preguntar antes de instalar** dependencias no especificadas en el contexto.
+3. Al generar componentes, incluir siempre: tipos de props, manejo de estados de carga/error y caso vacío.
+4. No generar código comentado como "TODO: implementar". Si no se sabe cómo implementar algo, indicarlo explícitamente.
+5. Cuando se refactoriza, no cambiar la interfaz pública de un módulo sin avisar.
+6. Preferir soluciones idiomáticas del lenguaje/framework antes que reinventar utilidades.
+7. Si se detecta una práctica insegura o antipatrón en el código existente, señalarlo aunque no sea parte del task.
+8. Generar tests unitarios junto con el código de producción cuando el task lo permita.
+
+---
+
+## 15. Base de Datos — Supabase
+- **Supabase** es la plataforma de base de datos oficial.
+- Usar el cliente oficial `@supabase/supabase-js` (web) y `supabase_flutter` (móvil).
+- Las credenciales deben vivir exclusivamente en variables de entorno.
+- Usar **Row Level Security (RLS)** en todas las tablas sin excepción.
+- Naming: tablas y columnas en `snake_case`, singular para nombres de tabla.
+
+---
+
+## 16. Registro de Cambios — `prd.md`
+- Todo cambio relevante debe documentarse en el archivo `prd.md`.
+- Ver skill `prd-manager` para el formato exacto.
+
+---
+
+## 17. Puerto de Desarrollo — Web
+- El servidor de desarrollo web debe correr **siempre en el puerto 8080**, sin excepción.
+- Configurar `strictPort: true`.
+
+---
+
+## 18. Agente Antigravity y Habilidades (Skills)
+El agente Antigravity tiene acceso a habilidades especializadas ubicadas en `.agents/skills/`. Antes de realizar tareas complejas, el agente debe consultar estas carpetas para descubrir flujos de trabajo optimizados:
+- **prd-manager**: Gestión de documentación de producto.
+- **feature-generator**: Creación de nuevas funcionalidades Web/Mobile.
+- **web-app-scaffolder**: Inicialización de proyectos Next.js.
+- **mobile-app-scaffolder**: Inicialización de proyectos Flutter.
+- **skill-creator**: Creación de nuevas habilidades para el agente.
