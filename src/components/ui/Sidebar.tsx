@@ -32,7 +32,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-72 bg-primary flex flex-col h-screen sticky top-0 z-20 shadow-2xl relative overflow-hidden shrink-0">
+    <aside className="w-64 bg-primary flex flex-col h-screen sticky top-0 z-20 shadow-2xl relative overflow-hidden shrink-0">
       {/* Background patterns */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-success/5 rounded-full blur-[100px] -mr-32 -mt-32" />
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full blur-[80px] -ml-32 -mb-32" />

@@ -102,3 +102,21 @@
 **Decisiones tomadas**:
 - **Sincronización de Datos**: Se ajustaron los componentes para que consuman las interfaces definidas en `src/lib/data/mock-data.ts` y `src/lib/mock-data.ts` según corresponda, resolviendo el desajuste de propiedades.
 - **Tipado Estricto**: Se aseguró que todas las referencias a objetos mock sigan las interfaces exportadas.
+
+## Ajuste de Interfaz: Tipografía y Espaciado — 2026-05-13
+
+**Tipo**: UI/UX | Diseño
+
+**Descripción**: Se realizó una recalibración global de la escala visual para mejorar la legibilidad y optimizar el uso del espacio en pantalla, respondiendo a la necesidad de una tipografía más prominente y un diseño más compacto.
+
+**Impacto**:
+- **Tipografía**: Se aumentó el tamaño de fuente base de `13.6px` a `17px` (un incremento del 25%), asegurando que el texto sea legible y jerarquizado.
+- **Espaciado (Scale)**: Se redefinió la escala de espaciado de Tailwind para que los valores grandes (`8`, `12`, `16`, etc.) sean proporcionalmente menores, reduciendo los márgenes y paddings excesivos en un ~30% promedio.
+- **Layout**:
+  - Se redujo el ancho del Sidebar de `w-72` a `w-64`.
+  - Se redujo la altura del Header de `h-20` a `h-16`.
+  - Se disminuyó el padding general de la aplicación de `p-8` a `p-6`.
+
+**Decisiones tomadas**:
+- **Uniformidad**: Al redefinir la escala de espaciado en el tema global, se logró una reducción uniforme en toda la aplicación sin necesidad de modificar cada componente individualmente.
+- **Densidad de Información**: El aumento de fuente junto con la reducción de espacios resulta en una interfaz con mayor densidad de información, más apropiada para herramientas industriales tipo CPQ/CRM.

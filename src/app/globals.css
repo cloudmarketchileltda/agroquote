@@ -25,6 +25,20 @@
   --radius-md: 0.5rem;
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
+  /* Spacing - Compact Scale for Industrial UI */
+  --spacing-1: 0.2rem;
+  --spacing-2: 0.4rem;
+  --spacing-3: 0.6rem;
+  --spacing-4: 0.8rem;
+  --spacing-5: 1rem;
+  --spacing-6: 1.2rem;
+  --spacing-8: 1.1rem;
+  --spacing-10: 1.4rem;
+  --spacing-12: 1.7rem;
+  --spacing-16: 2.2rem;
+  --spacing-20: 2.8rem;
+  --spacing-24: 3.5rem;
+  --spacing-32: 5rem;
 }
 
 :root {
@@ -39,7 +53,7 @@
 
 @layer base {
   html {
-    font-size: 13.6px; /* Reducción del 15% (16px * 0.85) */
+    font-size: 17px; /* Aumento del 25% respecto a los 13.6px previos */
   }
   * {
     border-color: var(--industrial-border);
@@ -48,6 +62,8 @@
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 

@@ -13,7 +13,7 @@ export function Shell({ children }: ShellProps) {
       
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         {/* Modern Header */}
-        <header className="h-20 bg-white border-b border-slate-200 px-8 flex items-center justify-between z-10">
+        <header className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between z-10">
           <div className="flex items-center gap-6 flex-1">
             <div className="relative w-full max-w-md group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
@@ -57,7 +57,7 @@ export function Shell({ children }: ShellProps) {
         
         {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto overflow-x-hidden scroll-smooth">
-          <div className="p-8">
+          <div className="p-6">
             <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
               {children}
             </div>
