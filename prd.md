@@ -72,3 +72,17 @@
 **Decisiones tomadas**:
 - **Simulación PDF**: Se optó por una vista web que imita un documento A4 para evitar dependencias de librerías PDF pesadas en esta fase de maqueta.
 - **Consistencia Visual**: Todas las nuevas pantallas utilizan los mismos tokens de "Industrial Tech Elegance" para mantener la coherencia de marca.
+## Ajuste de Configuración de Despliegue y Puerto de Producción — 2026-05-13
+
+**Tipo**: Infraestructura | Configuración | Fix
+
+**Descripción**: Se corrigieron errores de despliegue relacionados con la versión de Node.js y se ajustó el puerto de red para el entorno de producción.
+
+**Impacto**:
+- **Versión de Node.js**: Se forzó el uso de Node.js >=20.9.0 añadiendo el campo `engines` en `package.json` y creando un archivo `.nvmrc`. Esto resuelve el error de build en entornos que usan Nixpacks o versiones de Node heredadas.
+- **Puerto de Producción**: Se cambió el puerto de escucha en producción de `8080` a `80` en el `Dockerfile` y en el script `start` de `package.json`, cumpliendo con el requerimiento del usuario para el contenedor en producción.
+- **Puerto de Desarrollo**: Se mantiene el puerto `8080` para desarrollo local (`npm run dev`) según las reglas generales del proyecto.
+
+**Decisiones tomadas**:
+- **Compatibilidad con Nixpacks**: Se incluyeron múltiples indicadores de versión (`engines` y `.nvmrc`) para asegurar que el constructor detecte correctamente el requerimiento de Next.js 15.
+- **Seguridad y Estándares**: El puerto 80 es el estándar para tráfico HTTP en contenedores de producción, facilitando la integración con balanceadores de carga y proxies inversos en Dokploy.
