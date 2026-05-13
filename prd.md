@@ -86,3 +86,19 @@
 **Decisiones tomadas**:
 - **Compatibilidad con Nixpacks**: Se incluyeron múltiples indicadores de versión (`engines` y `.nvmrc`) para asegurar que el constructor detecte correctamente el requerimiento de Next.js 15.
 - **Seguridad y Estándares**: El puerto 80 es el estándar para tráfico HTTP en contenedores de producción, facilitando la integración con balanceadores de carga y proxies inversos en Dokploy.
+
+## Resolución de Errores de Tipado y Despliegue — 2026-05-13
+
+**Tipo**: Fix | Refactor
+
+**Descripción**: Se corrigieron errores críticos de TypeScript que impedían el build de producción, causados por inconsistencias entre las interfaces de datos mock y los componentes.
+
+**Impacto**:
+- **Proyectos**: Corregido error en `ProjectDetailPage` donde se intentaba acceder a `clientId`, `title` y `clientName`, propiedades que no existían en la interfaz `Project`. Se sincronizó con los campos `client` y `name`.
+- **Cotizaciones**: Corregido error en `QuoteDetailPage` al buscar productos por un campo `productId` inexistente en la interfaz `QuoteItem`. Se cambió a `id`.
+- **Middleware**: Corregida importación de `NextRequest` que se estaba realizando desde `next/request` en lugar de `next/server`.
+- **Estabilidad**: El proyecto ahora pasa el chequeo de tipos (`tsc`) satisfactoriamente.
+
+**Decisiones tomadas**:
+- **Sincronización de Datos**: Se ajustaron los componentes para que consuman las interfaces definidas en `src/lib/data/mock-data.ts` y `src/lib/mock-data.ts` según corresponda, resolviendo el desajuste de propiedades.
+- **Tipado Estricto**: Se aseguró que todas las referencias a objetos mock sigan las interfaces exportadas.

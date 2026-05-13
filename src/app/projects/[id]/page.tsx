@@ -22,22 +22,24 @@ import { cn } from '@/lib/utils';
 
 export default function ProjectDetailPage({ params }: { params: { id: string } }) {
   const project = MOCK_PROJECTS.find(p => p.id === params.id);
-  const client = project ? MOCK_CLIENTS.find(c => c.id === project.clientId) : null;
+  const client = project ? MOCK_CLIENTS.find(c => c.company === project.client) : null;
 
   if (!project) {
     notFound();
   }
 
   const statusStyles: any = {
-    active: 'bg-primary text-white border-primary/20',
+    in_progress: 'bg-primary text-white border-primary/20',
     completed: 'bg-success text-primary border-success/20',
-    on_hold: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+    delayed: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+    pending: 'bg-slate-100 text-slate-700 border-slate-200',
   };
 
   const statusLabels: any = {
-    active: 'En Ejecución',
+    in_progress: 'En Ejecución',
     completed: 'Completado',
-    on_hold: 'En Pausa',
+    delayed: 'En Pausa',
+    pending: 'Pendiente',
   };
 
   return (
@@ -54,7 +56,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
             </Link>
             <div>
               <div className="flex items-center gap-3">
-                <h2 className="text-2xl font-bold text-primary tracking-tight">{project.title}</h2>
+                <h2 className="text-2xl font-bold text-primary tracking-tight">{project.name}</h2>
                 <span className={cn(
                   "text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest border",
                   statusStyles[project.status]
@@ -86,7 +88,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-industrial-border">
                 <div className="space-y-2">
                   <p className="text-[10px] font-black text-secondary uppercase tracking-[0.2em]">Cliente Principal</p>
-                  <p className="text-lg font-bold text-primary">{project.clientName}</p>
+                  <p className="text-lg font-bold text-primary">{project.client}</p>
                   <p className="text-xs text-secondary flex items-center gap-1.5">
                     <User className="w-3 h-3" /> {client?.name}
                   </p>

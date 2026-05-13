@@ -177,7 +177,7 @@ export default function QuoteDetailPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {quote.items.map((item, index) => {
-                    const product = mockProducts.find(p => p.id === item.productId);
+                    const product = mockProducts.find(p => p.id === item.id);
                     return (
                       <tr key={index} className="group">
                         <td className="py-6">
